@@ -46,7 +46,7 @@ for(var i=0; i < [pages count]; i++){
     var artboard = [layers objectAtIndex:j];
     layernum = [layers count]-j;
 
-    var artname = padNumber(layernum) + "_" + [artboard name].replace(" ", "-");
+    var artname = padNumber(layernum) + "_" + [artboard name].split(" ").join("-");//  replace(" ", "-");
 
     if ([artboard name].charAt(0) == "-") { continue; }
 
