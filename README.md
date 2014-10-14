@@ -1,7 +1,7 @@
 ## Установка
 
 1. [Скачать архив](https://github.com/Falkeyn/sketch-plugins/archive/master.zip)
-2. Содержимое архива переместить в папку с плагинами Sketch (используйте команду Plugins › Reveal Plugins Folder… чтобы найти эту папку)
+2. Содержимое архива переместить в папку с плагинами Sketch<br />(используйте команду Plugins › Reveal Plugins Folder… чтобы найти эту папку)
 
 ## Описание плагинов
 
