@@ -29,6 +29,7 @@ function export_all_artboards(format,path){
   }
   var pages = [doc pages];
   var curpage = [doc currentPage];
+  var rootnum = 0;
 
   for(var i=0; i < [pages count]; i++){
     var page = [pages objectAtIndex:i]
@@ -38,38 +39,40 @@ function export_all_artboards(format,path){
         layernum = [layers count];
 
     if (pagename.charAt(0) == "-") { continue; }
-    
-    pagename = /*padNumber(i) + "_" + */pagename.replace(" ", "-") + "/";
-    if (i == 0) { pagename = "" }
+
+    if (pagename.charAt(0) == "*") {
+      pagename = "";
+     } else {
+      pagename = pagename.split(" ").join("_") + "/";
+    }
+
+    //if (i == 0) { pagename = "" }
+    var foldernum = 0;
 
     for (var j=0; j < [layers count]; j++) {
-      var artboard = [layers objectAtIndex:j];
-      layernum = [layers count]-j;
-
-      var artname = padNumber(layernum) + "_" + [artboard name].split(" ").join("-");//  replace(" ", "-");
-
+      var curLayerNum = [layers count] - j - 1;
+      var artboard = [layers objectAtIndex:curLayerNum];
       if ([artboard name].charAt(0) == "-") { continue; }
+      
+      if (pagename == "") { 
+        layernum = rootnum;
+        rootnum ++;
+      } else {
+        layernum = foldernum;
+        foldernum ++;
+      }
+
+      var artname = padNumber(layernum) + "-" + [artboard name].split(" ").join("_");
+
 
       save_artboard_tofile(artboard, path + "/" + pagename + artname, "png");
 
-      /*
-      if (in_sandbox()) {
-        sandboxAccess.accessFilePath_withBlock_persistPermission(path, function() {
-          [doc saveArtboardOrSlice:artboard toFile:path + "/" + pagename + artname + "." + format];
-        }, true)
-      } else {
-        log("We are NOT sandboxed")
-        [doc saveArtboardOrSlice:artboard toFile:path + "/" + pagename + artname + "." + format];
-      }
-      */
     }
     
   }
 
   [doc setCurrentPage:curpage];
 }
-
-//function export_artboards()
 
 function save_artboard_tofile(artboard,path,format) {
   if (in_sandbox()) {
@@ -82,9 +85,3 @@ function save_artboard_tofile(artboard,path,format) {
   } 
 }
 
-/*
-if ([doc fileURL] == null) {
-	alert("You need to save your document to use this command");
-} else {
-	export_all_artboards("png");
-}*/
