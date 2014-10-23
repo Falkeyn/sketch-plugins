@@ -1,6 +1,6 @@
 ## «Modulizer»
 
-Modulizer plug-in for [Sketch.app](http://bohemiancoding.com/sketch/) allows you easy control paddings for buttons, modules and areas. If your module has background your can set fixed paddings and easy restore for any content changes.
+Modulizer plug-in for [Sketch.app](http://bohemiancoding.com/sketch/) allows you easy control paddings for buttons, modules and areas. If your module has background your can set fixed paddings and easy restore it for any content changes.
 
 
 ## Demo
