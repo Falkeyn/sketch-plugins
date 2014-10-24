@@ -1,4 +1,4 @@
-// Make selection like a module (ctrl m)
+// Make selection like a module (cmd shift m)
 
 function alert(msg, title) {
   title = title || "alert";
