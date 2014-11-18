@@ -27,61 +27,63 @@ function export_all_artboards(format,path){
   if (path == undefined) {
     path = getExportPath();
   }
+
   var pages = [doc pages];
   var curpage = [doc currentPage];
-  var rootnum = 0;
+  
+  function export_loop() {
+    var rootnum = 0;
 
-  for(var i=0; i < [pages count]; i++){
-    var page = [pages objectAtIndex:i]
-    [doc setCurrentPage:page]
-    var pagename = [[doc currentPage] name],
-        layers = [[doc currentPage] artboards],
-        layernum = [layers count];
+    for(var i=0; i < [pages count]; i++){
+      var page = [pages objectAtIndex:i]
+      [doc setCurrentPage:page]
+      var pagename = [[doc currentPage] name]+"/",
+          layers = [[doc currentPage] artboards],
+          layernum = [layers count];
 
-    if (pagename.charAt(0) == "-") { continue; }
+      if (pagename.charAt(0) == "-") { continue; }
 
-    if (pagename.charAt(0) == "*") {
-      pagename = "";
-     } else {
-      pagename = pagename.split(" ").join("_") + "/";
-    }
-
-    //if (i == 0) { pagename = "" }
-    var foldernum = 0;
-
-    for (var j=0; j < [layers count]; j++) {
-      var curLayerNum = [layers count] - j - 1;
-      var artboard = [layers objectAtIndex:curLayerNum];
-      if ([artboard name].charAt(0) == "-") { continue; }
-      
-      if (pagename == "") { 
-        layernum = rootnum;
-        rootnum ++;
-      } else {
-        layernum = foldernum;
-        foldernum ++;
+      if (pagename.charAt(0) == "*") {
+        pagename = "";
+       } else {
+        //pagename = pagename.split(" ").join("_") + "/";
       }
 
-      var artname = padNumber(layernum) + "-" + [artboard name].split(" ").join("_");
+      var foldernum = 0;
+
+      for (var j=0; j < [layers count]; j++) {
+        var curLayerNum = [layers count] - j - 1;
+        var artboard = [layers objectAtIndex:curLayerNum];
+        if ([artboard name].charAt(0) == "-") { continue; }
+        
+        if (pagename == "") { 
+          layernum = rootnum;
+          rootnum ++;
+        } else {
+          layernum = foldernum;
+          foldernum ++;
+        }
+
+        var fileName = pagename + padNumber(layernum) + "-" + [artboard name] + ".png";
+
+        fileName = fileName.replace(/й/g,"и").replace(/\s/g,"_");
 
 
-      save_artboard_tofile(artboard, path + "/" + pagename + artname, "png");
+        [doc saveArtboardOrSlice:artboard toFile:path + "/" + fileName];
 
+      }
     }
     
+  }
+
+  if (in_sandbox()) {
+    sandboxAccess.accessFilePath_withBlock_persistPermission(path, export_loop, true);
+  } else {
+    log("We are NOT sandboxed");
+    export_loop();
   }
 
   [doc setCurrentPage:curpage];
 }
 
-function save_artboard_tofile(artboard,path,format) {
-  if (in_sandbox()) {
-    sandboxAccess.accessFilePath_withBlock_persistPermission(path, function() {
-      [doc saveArtboardOrSlice:artboard toFile:path + "." + format];
-    }, true)
-  } else {
-    log("We are NOT sandboxed")
-    [doc saveArtboardOrSlice:artboard toFile:path + "." + format];
-  } 
-}
 
