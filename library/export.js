@@ -23,9 +23,20 @@ function padNumber(num){
   return num;
 }
 
+function sanitize_filename(name) {
+  return name.replace(/й/g,"и").replace(/\s/g,"_");
+}
+
+function save_file_from_string(filename,the_string) {
+  var path = [@"" stringByAppendingString:filename],
+      str = [@"" stringByAppendingString:the_string];
+
+  [str writeToFile:path atomically:true encoding:NSUTF8StringEncoding error:null];
+}
+
 function export_all_artboards(format,path){
   if (path == undefined) {
-    path = getExportPath();
+    path = getExportPath() + "/";
   }
 
   var pages = [doc pages];
@@ -41,6 +52,8 @@ function export_all_artboards(format,path){
           layers = [[doc currentPage] artboards],
           layernum = [layers count];
 
+      pagename = sanitize_filename(pagename);
+
       if (pagename.charAt(0) == "-") { continue; }
 
       if (pagename.charAt(0) == "*") {
@@ -51,6 +64,7 @@ function export_all_artboards(format,path){
 
       var foldernum = 0;
 
+      var namesList = "";
       for (var j=0; j < [layers count]; j++) {
         var curLayerNum = [layers count] - j - 1;
         var artboard = [layers objectAtIndex:curLayerNum];
@@ -64,14 +78,14 @@ function export_all_artboards(format,path){
           foldernum ++;
         }
 
-        var fileName = pagename + padNumber(layernum) + "-" + [artboard name] + ".png";
+        var fileName = sanitize_filename(/*padNumber(layernum) + "-" +*/ [artboard name] + ".png");
+        namesList += fileName + "\n";
 
-        fileName = fileName.replace(/й/g,"и").replace(/\s/g,"_");
-
-
-        [doc saveArtboardOrSlice:artboard toFile:path + "/" + fileName];
+        [doc saveArtboardOrSlice:artboard toFile:path + pagename + fileName];
 
       }
+
+      save_file_from_string(path + pagename + "_index.txt", namesList);
     }
     
   }
