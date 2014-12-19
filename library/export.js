@@ -2,6 +2,12 @@
 #import 'library/sandbox.js'
 #import 'library/sandbox-sketch-utils.js'
 
+function alert(msg, title) {
+  title = title || "alert";
+  var app = [NSApplication sharedApplication];
+  [app displayDialog:msg withTitle:title];
+}
+
 function getFileFolder(){
 	var file_url = [doc fileURL],
 	file_path = [file_url path],
@@ -38,6 +44,9 @@ function export_all_artboards(format,path){
   if (path == undefined) {
     path = getExportPath() + "/";
   }
+
+  var foldersCount = 0;
+  var filesCount = 0;
 
   var pages = [doc pages];
   var curpage = [doc currentPage];
@@ -82,12 +91,12 @@ function export_all_artboards(format,path){
         namesList += fileName + "\n";
 
         [doc saveArtboardOrSlice:artboard toFile:path + pagename + fileName];
-
+        filesCount++
       }
 
       save_file_from_string(path + pagename + "_index.txt", namesList);
     }
-    
+    alert("Сохранено файлов — "+filesCount, "Экспорт завершен");
   }
 
   if (in_sandbox()) {
